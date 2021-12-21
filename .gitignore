@@ -51,14 +51,9 @@ compile_commands.json
 # QtCreator local machine specific files for imported projects
 *creator.user*
 
-<<<<<<< HEAD
-build-*/
-.vscode/
-=======
+
 .vscode/
 build-*/
 
 debug/
 release/
-
->>>>>>> 7317915371507f828e1a8785faf3ee3d5d864f0e
