@@ -71,12 +71,7 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
             // 3.
             sym = nowRule.at(0);
             if (sym.isUpper()) {
-                // FIRST.append(getFIRST(sym).removeOne('%'));
                 if (readyFIRST[sym]) {
-                    // QVector<QChar> add;
-                    // bool getFirstSuccess = getFIRST(sym, add);
-                    // Q_ASSERT(getFirstSuccess);
-                    // FIRST.append(add.removeOne('%'));
                     Q_ASSERT(firstMap.contains(sym));
                     QVector<QChar>tmp = firstMap[sym];
                     tmp.removeOne('%');
@@ -114,7 +109,8 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
         QMessageBox::warning(NULL, "Waring",
                              QString("In getFirst():%1").arg(str));
     }
-    returnFirst = FIRST;
+    // QSet<QVector<QChar>>ss=FIRST;
+    returnFirst = deduplicationVectorQChar(FIRST);
     qDebug()<<symbol<<"'s FIRSET is ready";
     return true;
 }
@@ -128,6 +124,7 @@ bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
         if (symbol == startSymbol) FOLLOW.append('#');
         // 2.
         for (auto i = ruleMap.begin(); i != ruleMap.end(); i++) {
+            if(i.key()==symbol) continue;
             for (auto k = i.value().begin(); k != i.value().end(); k++) {
                 QString nowRule = *k;
                 if (nowRule.contains(symbol)) {
@@ -137,8 +134,11 @@ bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
                         nowRule.at(nowRule.size() - 2) == symbol) {
                         if (!terminatorVector.contains(backSym))
                             FOLLOW.append(backSym);
-                        else
-                            FOLLOW.append(firstMap[backSym]);
+                        else{
+                            QVector<QChar> add=firstMap[backSym];
+                            add.removeOne('%');
+                            FOLLOW.append(add);
+                        }
                     }
 
                     // 3.
@@ -148,9 +148,7 @@ bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
                           firstMap[backSym].contains('%')) &&
                          backSym != symbol)) {
                         if (readyFOLLOW[i.key()] == true) {
-                            QVector<QChar> fo;
-                            getFOLLOW(i.key(), fo);
-                            FOLLOW.append(fo);
+                            FOLLOW.append(followMap[i.key()]);
                         } else
                             return false;
                     }
@@ -162,7 +160,8 @@ bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
         QMessageBox::warning(NULL, "Waring",
                              QString("In getFOLLOW:%1").arg(str));
     }
-    returnFollow = FOLLOW;
+    
+    returnFollow = deduplicationVectorQChar(FOLLOW);
     qDebug()<<symbol<<"'s FOLLOW is ready";
     return true;
 }
@@ -203,7 +202,6 @@ void LL_1::createFOLLOW() {
     while (sum--) {
         for (auto i = terminatorVector.begin(); i != terminatorVector.end();
              i++) {
-            
             if(readyFOLLOW[*i])
                 continue;
             QVector<QChar> nowFollow;
@@ -218,4 +216,12 @@ void LL_1::createFOLLOW() {
     }
     if(nowtime!=terminatorVector.size())
         QMessageBox::warning(NULL,"warning","Create FOLLOW Failed!");
+}
+
+
+QVector<QChar> LL_1::deduplicationVectorQChar(QVector<QChar> &vec){
+    std::sort(vec.begin(),vec.end());     //去重前需要排序
+    auto it= std::unique(vec.begin(),vec.end());   //去除容器内重复元素
+    vec.erase(it,vec.end());
+    return vec;
 }

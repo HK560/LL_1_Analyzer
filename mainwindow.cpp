@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->ruleEdit->setText("E->TD\nD->+TD|%\nT->FU\nU->*FU|%\nF->(E)|i\n");
+    ui->startSymbolEdit->setText("E");
 }
 
 MainWindow::~MainWindow()

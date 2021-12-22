@@ -1,12 +1,14 @@
 #ifndef LL_1_H
 #define LL_1_H
 
+#include <algorithm>
 #include<QString>
 #include<QStringList>
 #include<QMessageBox>
 #include<QMap>
 #include<QVector>
 #include<QDebug>
+#include<QSet>
 class LL_1
 {
 public:
@@ -30,6 +32,8 @@ private:
     void createFOLLOW();
     QMap<QChar,QVector<QChar>> firstMap;
     QMap<QChar,QVector<QChar>> followMap;
+
+    QVector<QChar> deduplicationVectorQChar(QVector<QChar> &vec);
 
 };
 
