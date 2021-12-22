@@ -456,3 +456,5 @@ build-*/
 
 debug/
 release/
+
+*.vcxproj*

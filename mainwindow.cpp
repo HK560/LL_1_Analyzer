@@ -24,6 +24,9 @@ void MainWindow::on_resultBtn_clicked()
     QString startSymbol =ui->startSymbolEdit->text();
     LL=new LL_1(ruleList,startSymbol,str);
     LL->createLLlist();
+    LL->buildLLMaps();
+    LL->analysis();
+
     
 
 }
