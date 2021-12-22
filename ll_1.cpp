@@ -43,18 +43,6 @@ bool LL_1::createLLlist() {
 
 void LL_1::analysis() {}
 
-<<<<<<< HEAD
-QVector<QChar> LL_1::getFIRST(QChar symbol)
-{
-    QStringList nowSymbolRule=ruleMap[symbol];
-    QVector<QChar> FIRST;
-    bool flag=false;
-    try {
-
-        for(auto i=nowSymbolRule.begin();i!=nowSymbolRule.end();i++){
-
-            QString nowRule=*i;
-=======
 bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
     Q_ASSERT(ruleMap.contains(symbol));
     QVector<QChar> FIRST;
@@ -63,7 +51,6 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
     try {
         for (auto i = nowSymbolRule.begin(); i != nowSymbolRule.end(); i++) {
             QString nowRule = *i;
->>>>>>> 7317915371507f828e1a8785faf3ee3d5d864f0e
             QChar sym;
             // 1.
             sym = nowRule.at(0);
@@ -72,20 +59,6 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
                 continue;
             }
 
-<<<<<<< HEAD
-            //2.
-            sym=nowRule.at(0);
-            if(sym=="%"){
-                if(flag==false)
-                    FIRST.append(sym);
-                break;
-            }
-
-            //3.
-            sym=nowRule.at(0);
-            if(sym.isUpper()){
-                FIRST.append(getFIRST(sym).removeOne('%'));
-=======
             // 2.
             // 1. 中实现
             // sym = nowRule.at(0);
@@ -125,7 +98,7 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
                             tmp.removeOne('%');
                             FIRST.append(tmp);
                         }
-                        else false;
+                        else return false;
                     } else
                         break;
                 }
@@ -135,7 +108,6 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
                 if (k == nowRule.size() && !FIRST.contains('%')) {
                     FIRST.append('%');
                 }
->>>>>>> 7317915371507f828e1a8785faf3ee3d5d864f0e
             }
         }
     } catch (QString str) {
@@ -147,44 +119,6 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
     return true;
 }
 
-<<<<<<< HEAD
-            //4.
-            for(int k=1;k<nowRule.size();k++){
-                QChar lastSym=nowRule.at(k-1);
-                QChar nSym=nowRule.at(k);
-                if(!lastSym.isUpper()&&!nSym.isUpper())
-                    break;
-                if(getFIRST(lastSym).contains('%')){
-                    FIRST.append(getFIRST(nSym).removeOne('%'));
-                }else
-                    break;
-                if(k==nowRule.size()&&flag==false)
-                    FIRST.append('%');                
-            }
-        }
-    }  catch (QString str) {
-        QMessageBox::warning(NULL,"Waring",QString("In getFirst():%1").arg(str));
-    }
-    return FIRST;
-}
-
-QVector<QChar> LL_1::getFOLLOW(QChar symbol)
-{
-    QVector<QChar> FOLLOW;
-    try
-    {
-        /* code */
-        // 1.
-        FOLLOW.append()
-
-    }
-    catch(QString str)
-    {
-        QMessageBox::warning(NULL,"Waring",QString("In getFOLLOW:%1").arg(str));
-    }
-    
-    return FOLLOW;
-=======
 bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
     Q_ASSERT(!firstMap.isEmpty());
     Q_ASSERT(!terminatorVector.isEmpty());
@@ -284,5 +218,4 @@ void LL_1::createFOLLOW() {
     }
     if(nowtime!=terminatorVector.size())
         QMessageBox::warning(NULL,"warning","Create FOLLOW Failed!");
->>>>>>> 7317915371507f828e1a8785faf3ee3d5d864f0e
 }
