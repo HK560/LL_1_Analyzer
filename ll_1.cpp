@@ -1,7 +1,7 @@
 ﻿/*
  * @Author: HK560
  * @Date: 2021-12-22 10:20:16
- * @LastEditTime: 2021-12-23 16:47:45
+ * @LastEditTime: 2021-12-24 09:46:25
  * @LastEditors: HK560
  * @Description: LL1文法分析实现
  * @FilePath: \LL_1_Analyzer\ll_1.cpp
@@ -26,7 +26,7 @@ bool LL_1::createLLlist() {
             if (nowRule.isEmpty()) continue;
             QStringList leftRight =
                 nowRule.split("->", QString::SkipEmptyParts);
-            if (leftRight.size() != 2) throw "leftRight's size error!";
+            if (leftRight.size() != 2) throw QString("输入文法非法");
             QChar left = leftRight.first().at(0);
             QString right = leftRight.last();
             QStringList rightList = right.split('|', QString::SkipEmptyParts);
@@ -38,13 +38,9 @@ bool LL_1::createLLlist() {
             readyFOLLOW.insert(left, false);
             nonTerminatorVector.append(left);
             qDebug() << left << "->" << ruleMap[left];
-            // debug
         }
         createFIRST();
         createFOLLOW();
-        // outputFIRST();
-        // outputFOLLOW();
-        // culi
     } catch (QString str) {
         QMessageBox::warning(NULL, "Warning", str);
         return false;
@@ -54,11 +50,9 @@ bool LL_1::createLLlist() {
 
 void LL_1::analysis(QString inputString) {
     QStack<QChar> symbolStack;
-    step=0;
+    step = 0;
     //符号栈
-    // QString inputString = "i+i#";                    //输入字符串
     auto itr_nowInputStrChar = inputString.begin();  //输入字符串的迭代器
-
     symbolStack.push('#');
     symbolStack.push('E');
     while (!symbolStack.isEmpty()) {
@@ -75,7 +69,7 @@ void LL_1::analysis(QString inputString) {
                            inputString.mid(nowInputStrSymbolIndex));
                 qDebug() << "Match successfully" << endl;
                 emit sendStepInfo(QString("匹配结束"));
-                QMessageBox::information(NULL,"Info","匹配成功!");
+                QMessageBox::information(NULL, "Info", "匹配成功!");
                 return;
             }
             if (itr_nowInputStrChar != inputString.end()) {
@@ -85,7 +79,7 @@ void LL_1::analysis(QString inputString) {
                 itr_nowInputStrChar++;  //指向下一个输入串字符
             } else {
                 qDebug() << "error!";
-                QMessageBox::warning(NULL,"错误","匹配错误");
+                QMessageBox::warning(NULL, "错误", "匹配错误");
                 return;
             }
         }
@@ -118,7 +112,7 @@ void LL_1::analysis(QString inputString) {
             //对应规则不存在则报错
             else {
                 qDebug() << "error!" << endl;
-                QMessageBox::warning(NULL,"错误","匹配错误");
+                QMessageBox::warning(NULL, "错误", "匹配错误");
                 return;
             }
         }
@@ -141,16 +135,6 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
                 FIRST.append(sym);
                 continue;
             }
-
-            // 2.
-            // 1. 中实现
-            // sym = nowRule.at(0);
-            // if (sym == "%")
-            // {
-            //     FIRST.append(sym);
-            //     break;
-            // }
-
             // 3.
             sym = nowRule.at(0);
             if (sym.isUpper()) {
@@ -162,7 +146,6 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
                 } else
                     return false;
             }
-
             // 4.
             for (int k = 1; k < nowRule.size(); k++) {
                 QChar lastSym = nowRule.at(k - 1);
@@ -180,9 +163,6 @@ bool LL_1::getFIRST(QChar symbol, QVector<QChar> &returnFirst) {
                     } else
                         break;
                 }
-                // if (getFIRST(lastSym).contains('%')) {
-                //     FIRST.append(getFIRST(nSym).removeOne('%'));
-                // }
                 if (k == nowRule.size() && !FIRST.contains('%')) {
                     FIRST.append('%');
                 }
@@ -223,7 +203,6 @@ bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
                             FOLLOW.append(add);
                         }
                     }
-
                     // 3.
                     backSym = nowRule.back();
                     if (backSym == symbol ||
@@ -235,7 +214,6 @@ bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
                         } else
                             return false;
                     }
-                    // if(backSym!=symbol&&nowRule.at(nowRule.size()-2)==symbol&&getFIRST(backSym).contains('%')){
                 }
             }
         }
@@ -243,7 +221,6 @@ bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
         QMessageBox::warning(NULL, "Waring",
                              QString("In getFOLLOW:%1").arg(str));
     }
-
     returnFollow = deduplicationVectorQChar(FOLLOW);
     qDebug() << symbol << "'s FOLLOW is ready";
     return true;
@@ -252,7 +229,6 @@ bool LL_1::getFOLLOW(QChar symbol, QVector<QChar> &returnFollow) {
 void LL_1::createFIRST() {
     Q_ASSERT(!ruleMap.isEmpty());
     Q_ASSERT(!nonTerminatorVector.isEmpty());
-
     int sum = nonTerminatorVector.size();
     int nowtime = 0;
     while (sum--) {
@@ -309,44 +285,36 @@ QVector<QChar> LL_1::deduplicationVectorQChar(QVector<QChar> &vec) {
 //输出分析步骤
 void LL_1::outputStep(QChar stackTopChar, QString nowInputStrChar) {
     QString outputText;
-    outputText .append("步骤:");
+    outputText.append("步骤:");
     outputText.append(QString::number(++step));
-    outputText .append (" 符号栈栈顶:");
-    outputText .append(stackTopChar);
-    outputText .append (" 字符串:");
-    outputText .append (nowInputStrChar);
-    qDebug()<<outputText;
+    outputText.append(" 符号栈栈顶:");
+    outputText.append(stackTopChar);
+    outputText.append(" 字符串:");
+    outputText.append(nowInputStrChar);
+    qDebug() << outputText;
     emit sendStepInfo(outputText);
-
 }
 
-void LL_1::outputFIRST(QChar sym)
-{
-    
-            QString outputStr;
-            outputStr.append(QString("FIRST(%1)=[").arg(sym));
-        for(auto k=firstMap[sym].begin();k!=firstMap[sym].end();k++){
-
-            outputStr.append(*k);
-            outputStr.append(" ");
-        }
-        outputStr.append("]");
-        emit sendStepInfo(outputStr);
-
-    
+void LL_1::outputFIRST(QChar sym) {
+    QString outputStr;
+    outputStr.append(QString("FIRST(%1)=[").arg(sym));
+    for (auto k = firstMap[sym].begin(); k != firstMap[sym].end(); k++) {
+        outputStr.append(*k);
+        outputStr.append(" ");
+    }
+    outputStr.append("]");
+    emit sendStepInfo(outputStr);
 }
 
-void LL_1::outputFOLLOW(QChar sym)
-{
-            QString outputStr;
-            outputStr.append(QString("FOLLOW(%1)=[").arg(sym));
-        for(auto k=followMap[sym].begin();k!=followMap[sym].end();k++){
-
-            outputStr.append(*k);
-            outputStr.append(" ");
-        }
-        outputStr.append("]");
-        emit sendStepInfo(outputStr);
+void LL_1::outputFOLLOW(QChar sym) {
+    QString outputStr;
+    outputStr.append(QString("FOLLOW(%1)=[").arg(sym));
+    for (auto k = followMap[sym].begin(); k != followMap[sym].end(); k++) {
+        outputStr.append(*k);
+        outputStr.append(" ");
+    }
+    outputStr.append("]");
+    emit sendStepInfo(outputStr);
 }
 
 void LL_1::buildLLMaps() {

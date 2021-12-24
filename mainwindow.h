@@ -21,9 +21,9 @@ public:
     ~MainWindow();
 public slots:
     void revStepInfo(QString info);
+    
 private slots:
     void on_resultBtn_clicked();
-
     void on_clearBtn_clicked();
 
 private:
